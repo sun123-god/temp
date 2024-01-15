@@ -1,0 +1,74 @@
+1.malloc
+
+使用方法:
+   void* malloc (size_t size)
+   int *p = (int *)malloc(10*sizeof(int));
+
+注意事项：
+@@参数：
+  size：开辟动态内存的大小单位为字节
+  如果参数 size 为0，malloc返回值可能是空指针，也可能不是，取决于编译器。
+ @@如果size为0，则返回值可能为空指针或其他（取决于编译器），返回的指针不能被解引用
+ @@如果开辟成功，则返回一个指向开辟好空间的指针
+ @@如果开辟失败，则返回一个NULL指针，因此malloc的返回值一定要做检查。返回值的类型是 void* ，
+   所以malloc函数并不知道开辟空间的类型，具体在使用的时候使用者自己来决定
+ @@开辟出来的内存若未初始化，则内存中的值是随机值
+2.calloc
+
+使用方法：
+
+   void* calloc(size_t num,size_t size);
+   例：int *p = (int *)calloc(10,sizeof(int));
+
+注意事项：
+@@参数：
+  num：要分配的元素个数
+  size：每个元素的大小
+@@函数的功能是为 num 个大小为 size 的元素开辟一块空间，并且把空间的每个字节初始化为0。
+@@与函数 malloc 的区别只在于 calloc 会在返回地址之前把申请的空间的每个字节初始化为全0。
+其他特点与malloc函数一样，参考malloc函数即可
+
+3.realloc
+
+使用方法：
+
+    void*realloc(void* ptr，size_t size)
+
+    int *p = (int*)malloc(10*sizeof(int));
+    int *tmp = (int*)realloc(p,20*sizeof(int)); 
+
+注意事项：
+@@参数：
+  ptr： 是要调整的内存地址
+  size： 调整之后新大小
+@@返回值为调整之后的内存起始位置。
+@@如果返回一个新的地址，这个函数调整原内存空间大小的基础上，还会将原来内存中的数据拷贝到新 的空间。
+@@realloc调整失败，将返回一个空指针，并且参数ptr所指向的内存块不会被释放(它仍然有效，其内容不变)。
+@@如果新内存大小更大，则新分配的部分的值是不确定的
+@@如果ptr是一个空指针，realloc等价于malloc，分配一个大小为字节的新块，并返回一个指向其开头的指针
+@@如果使用realloc缩容，缩小的空间没有还给操作系统，只是缩了我们对这些空间的使用权限，不建议使用
+
+
+4.free
+
+使用方法：void freedom(voi* ptr)
+
+注意事项：
+@@参数：
+  ptr：指向先前使用malloc、calloc或realloc分配的内存块的指针。
+@@如果参数 ptr 指向的空间不是动态开辟的，那free函数的行为是未定义的。
+@@如果参数 ptr 是NULL指针，则函数不执行任何操作
+注意：free只会释放ptr指向的动态内存，而不会改变ptr本身的值，就是说ptr仍然指向原来的位置（虽然是无效的）
+
+int i = 0;
+int *p =(int*)malloc(10*sizeof(int));
+if(p == NULL)
+{
+    printf("error");
+}
+free(p);
+p = NULL;
+return 0;
+
+@@注意：free只会释放p指向的动态内存，而不会改变p指针本身的值，就是说p仍然指向原来的位置（虽然是无效的）
+  此时p指向一块无效的内存，如果解引用就是非法访问内存，p就变成的野指针，所有在释放内存之后要将p置为NULL.
